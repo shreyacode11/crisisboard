@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ArrowLeft, Plus, X, Trash2 } from 'lucide-react'
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, closestCorners, useDroppable } from '@dnd-kit/core'
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, pointerWithin, closestCorners, useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { getBoardApi } from '../api/board.js'
@@ -139,7 +139,7 @@ export default function BoardPage() {
         <span className='text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full'>● Live</span>
       </nav>
       <div className='flex-1 overflow-x-auto p-6'>
-        <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           <div className='flex gap-4'>
             {board.columns.sort((a, b) => a.order - b.order).map(column => (
               <Column key={column._id} column={column} tasks={getColumnTasks(column.name)}
