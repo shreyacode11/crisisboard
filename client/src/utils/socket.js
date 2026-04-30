@@ -1,11 +1,13 @@
 import { io } from 'socket.io-client'
 import { API_URL } from '../config'
 
+const BASE = 'https://crisisboard-api.onrender.com'
+
 let socket
 
 export const connectSocket = () => {
   if (!socket) {
-    socket = io(API_URL, { withCredentials: true })
+    socket = io(BASE, { withCredentials: true })
   }
   return socket
 }

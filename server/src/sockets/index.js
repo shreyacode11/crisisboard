@@ -5,11 +5,14 @@ let io
 export const initSocket = (server) => {
   io = new Server(server, {
   cors: {
-    origin: [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      process.env.CLIENT_URL
-    ].filter(Boolean),
+    origin: function(origin, cb) {
+      if (!origin) return cb(null, true)
+      if (
+        ['http://localhost:5173', 'http://localhost:3000'].includes(origin) ||
+        origin.endsWith('.vercel.app')
+      ) return cb(null, true)
+      return cb(new Error('Not allowed'))
+    },
     credentials: true
   }
 })
