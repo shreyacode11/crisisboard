@@ -228,7 +228,7 @@ function Column({ column, tasks, onAddTask, onTaskClick }) {
         </div>
         <button onClick={() => setAdding(true)} className='text-gray-600 hover:text-white transition-colors'><Plus size={14} /></button>
       </div>
-      <div ref={setNodeRef} className='min-h-[2px]'>
+      <div ref={setNodeRef} className='min-h-[40px]'>
         <SortableContext items={tasks.map(t => t._id)} strategy={verticalListSortingStrategy}>
           {tasks.map(task => <TaskCard key={task._id} task={task} onClick={onTaskClick} />)}
         </SortableContext>
