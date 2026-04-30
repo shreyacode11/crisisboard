@@ -1,3 +1,4 @@
+import { API_URL } from './config'
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
