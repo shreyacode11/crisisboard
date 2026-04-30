@@ -22,7 +22,33 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: 'Too ma
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: 'Too many auth attempts' })
 
 app.use(helmet())
-app.use(cors({ origin: (origin, cb) => { if (!origin || allowedOrigins.includes(origin)) cb(null, true); else cb(new Error('Not allowed by CORS')) }, credentials: true }))
+app.use(cors({
+  origin: function(origin, cb) {
+    if (!origin) return cb(null, true)
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app')
+    ) {
+      return cb(null, true)
+    }
+    return cb(new Error('Not allowed by CORS'))
+  },
+  credentials: true
+}))
+
+app.options('*', cors({
+  origin: function(origin, cb) {
+    if (!origin) return cb(null, true)
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app')
+    ) {
+      return cb(null, true)
+    }
+    return cb(new Error('Not allowed by CORS'))
+  },
+  credentials: true
+}))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
@@ -36,11 +62,14 @@ app.use('/api/workspaces', workspaceRoutes)
 app.use('/api/workspaces/:workspaceId/projects', projectRoutes)
 app.use('/api/workspaces/:workspaceId/projects/:projectId/boards', boardRoutes)
 app.use('/api/workspaces/:workspaceId/projects/:projectId/tasks', taskRoutes)
-
 app.use((err, req, res, next) => {
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ success: false, message: 'CORS not allowed' })
+  }
   console.error(err.stack)
   res.status(500).json({ success: false, message: 'Internal server error' })
 })
+
 
 app.use((req, res) => res.status(404).json({ success: false, message: 'Route not found' }))
 
