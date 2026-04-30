@@ -1,4 +1,7 @@
 import { API_URL } from '../config'
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, closestCorners } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
+import { useDroppable } from '@dnd-kit/core'
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -33,7 +36,11 @@ function Column({ column, tasks, onAddTask, onTaskClick, onDeleteTask }) {
   const [adding, setAdding] = useState(false)
   const [title, setTitle] = useState('')
   const [priority, setPriority] = useState('medium')
+
+  const { setNodeRef } = useDroppable({ id: column.name })
+
   const handleAdd = async (e) => { e.preventDefault(); if (!title.trim()) return; await onAddTask(title, column.name, priority); setTitle(''); setPriority('medium'); setAdding(false) }
+
   return (
     <div className='shrink-0 w-72 bg-gray-900 rounded-xl p-3'>
       <div className='flex items-center justify-between mb-3'>
@@ -44,9 +51,11 @@ function Column({ column, tasks, onAddTask, onTaskClick, onDeleteTask }) {
         </div>
         <button onClick={() => setAdding(true)} className='text-gray-600 hover:text-white transition-colors'><Plus size={14} /></button>
       </div>
-      <SortableContext items={tasks.map(t => t._id)} strategy={verticalListSortingStrategy}>
-        {tasks.map(task => <TaskCard key={task._id} task={task} onClick={onTaskClick} onDelete={onDeleteTask} />)}
-      </SortableContext>
+      <div ref={setNodeRef} className='min-h-[40px]'>
+        <SortableContext items={tasks.map(t => t._id)} strategy={verticalListSortingStrategy}>
+          {tasks.map(task => <TaskCard key={task._id} task={task} onClick={onTaskClick} onDelete={onDeleteTask} />)}
+        </SortableContext>
+      </div>
       {adding && (
         <form onSubmit={handleAdd} className='mt-2 bg-gray-800 rounded-lg p-3'>
           <input autoFocus value={title} onChange={e => setTitle(e.target.value)}
@@ -66,7 +75,6 @@ function Column({ column, tasks, onAddTask, onTaskClick, onDeleteTask }) {
     </div>
   )
 }
-
 export default function BoardPage() {
   const { workspaceId, projectId, boardId } = useParams()
   const navigate = useNavigate()
@@ -109,17 +117,17 @@ export default function BoardPage() {
 
   const handleDragStart = (event) => { setActiveTask(tasks.find(t => t._id === event.active.id)) }
   const handleDragEnd = async (event) => {
-    const { active, over } = event
-    setActiveTask(null)
-    if (!over) return
-    const task = tasks.find(t => t._id === active.id)
-    const overTask = tasks.find(t => t._id === over.id)
-    if (!task) return
-    const newStatus = overTask ? overTask.status : over.id
-    if (task.status === newStatus) return
-    setTasks(tasks.map(t => t._id === active.id ? { ...t, status: newStatus } : t))
-    try { await updateTaskApi(workspaceId, projectId, active.id, { status: newStatus }) } catch { toast.error('Failed to update') }
-  }
+  const { active, over } = event
+  setActiveTask(null)
+  if (!over) return
+  const task = tasks.find(t => t._id === active.id)
+  if (!task) return
+  const overTask = tasks.find(t => t._id === over.id)
+  const newStatus = overTask ? overTask.status : over.id
+  if (task.status === newStatus) return
+  setTasks(prev => prev.map(t => t._id === active.id ? { ...t, status: newStatus } : t))
+  try { await updateTaskApi(workspaceId, projectId, active.id, { status: newStatus }) } catch { toast.error('Failed to update') }
+}
 
   const getColumnTasks = (name) => tasks.filter(t => t.status === name)
 
