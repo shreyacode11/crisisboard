@@ -4,8 +4,8 @@ A full-stack Jira-like project management application built with the MERN stack 
 
 ## Live Demo
 
-Frontend: https://your-app.vercel.app
-Backend: https://your-api.onrender.com
+Frontend:https://crisisboard-xi.vercel.app
+Backend:https://crisisboard-api.onrender.com
 
 ---
 
