@@ -35,7 +35,7 @@ function Column({ column, tasks, onAddTask, onTaskClick, onDeleteTask }) {
   const [priority, setPriority] = useState('medium')
   const handleAdd = async (e) => { e.preventDefault(); if (!title.trim()) return; await onAddTask(title, column.name, priority); setTitle(''); setPriority('medium'); setAdding(false) }
   return (
-    <div className='flex-shrink-0 w-72 bg-gray-900 rounded-xl p-3'>
+    <div className='shrink-0 w-72 bg-gray-900 rounded-xl p-3'>
       <div className='flex items-center justify-between mb-3'>
         <div className='flex items-center gap-2'>
           <div className='w-2 h-2 rounded-full' style={{ backgroundColor: column.color }} />
