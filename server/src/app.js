@@ -36,13 +36,10 @@ app.use(cors({
   credentials: true
 }))
 
-app.options('*', cors({
+app.options('/{*path}', cors({
   origin: function(origin, cb) {
     if (!origin) return cb(null, true)
-    if (
-      allowedOrigins.includes(origin) ||
-      origin.endsWith('.vercel.app')
-    ) {
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
       return cb(null, true)
     }
     return cb(new Error('Not allowed by CORS'))
