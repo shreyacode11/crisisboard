@@ -2,7 +2,7 @@ import express from 'express'
 import { createProject, getProjects, getProject, updateProject, deleteProject } from '../controllers/project.controller.js'
 import { protect } from '../middleware/auth.js'
 import { requireWorkspaceRole } from '../middleware/rbac.js'
-import { deleteProject } from '../controllers/project.controller.js'
+
 
 const router = express.Router({ mergeParams: true })
 

@@ -10,7 +10,7 @@ export const sendVerificationEmail = async (to, token) => {
   await transporter.sendMail({
     from: `"CrisisBoard" <${process.env.GMAIL_USER}>`,
     to,
-    subject: 'Verify your email',
-    html: `<h2>Welcome to CrisisBoard!</h2><p>Click to verify:</p><a href="${link}">${link}</a><p>Link expires in 24 hours.</p>`
+    subject: 'Verify your CrisisBoard account',
+    html: `<h2>Welcome to CrisisBoard!</h2><p>Click the link below to verify your email:</p><a href="${link}" style="background:#6366f1;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;margin:16px 0">Verify Email</a><p>Link expires in 24 hours.</p>`
   })
 }

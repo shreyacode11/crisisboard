@@ -21,7 +21,11 @@ export const register = async (req, res) => {
     user.verifyToken = token
     user.verifyTokenExpiry = Date.now() + 24 * 60 * 60 * 1000
     await user.save()
-    await sendVerificationEmail(user.email, token)
+    try {
+  await sendVerificationEmail(user.email, token)
+} catch (mailError) {
+  console.error('MAIL ERROR FULL:', mailError)
+}
     return res.status(201).json({ success: true, message: 'Check your email to verify your account.' })
   } catch (error) {
     console.error('REGISTER ERROR:', error.message)
