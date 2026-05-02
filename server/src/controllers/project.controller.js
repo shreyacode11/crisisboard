@@ -39,9 +39,3 @@ export const updateProject = async (req, res) => {
   } catch (error) { return errorResponse(res, 500, error.message) }
 }
 
-export const deleteProject = async (req, res) => {
-  try {
-    await Project.findByIdAndDelete(req.params.projectId)
-    return successResponse(res, 200, 'Project deleted')
-  } catch (error) { return errorResponse(res, 500, error.message) }
-}
