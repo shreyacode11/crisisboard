@@ -1,6 +1,8 @@
 import User from '../models/User.js'
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt.js'
 import { successResponse, errorResponse } from '../utils/apiResponse.js'
+import crypto from 'crypto'
+import { sendVerificationEmail } from '../utils/mailer.js'
 
 const cookieOptions = {
   httpOnly: true,
@@ -11,6 +13,14 @@ const cookieOptions = {
 
 export const register = async (req, res) => {
   try {
+    // Inside register(), after saving user:
+const token = crypto.randomBytes(32).toString('hex')
+user.verifyToken = token
+user.verifyTokenExpiry = Date.now() + 24 * 60 * 60 * 1000
+await user.save()
+await sendVerificationEmail(user.email, token)
+// Return message instead of JWT
+res.status(201).json({ success: true, message: 'Check your email to verify your account.' })
     const { name, email, password } = req.body
     const existingUser = await User.findOne({ email })
     if (existingUser) return errorResponse(res, 400, 'Email already registered')
@@ -29,6 +39,9 @@ export const register = async (req, res) => {
     return errorResponse(res, 500, error.message)
   }
 }
+
+
+
 
 export const login = async (req, res) => {
   try {

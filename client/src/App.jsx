@@ -25,7 +25,7 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import BoardPage from './pages/BoardPage.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
-
+import VerifyEmailPage from './pages/VerifyEmailPage.jsx'
 export default function App() {
   const { fetchMe } = useAuthStore()
   const fetched = useRef(false)
@@ -39,8 +39,10 @@ export default function App() {
 
   return (
     <Routes>
+      
       <Route path='/login' element={<LoginPage />} />
       <Route path='/register' element={<RegisterPage />} />
+      <Route path='/verify-email' element={<VerifyEmailPage />} />
       <Route path='/' element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path='/board/:workspaceId/:projectId/:boardId' element={<ProtectedRoute><BoardPage /></ProtectedRoute>} />
       <Route path='*' element={<Navigate to='/' />} />

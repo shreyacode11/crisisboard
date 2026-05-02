@@ -14,5 +14,13 @@ router.put('/:workspaceId', requireWorkspaceRole('admin'), updateWorkspace)
 router.delete('/:workspaceId', requireWorkspaceRole('admin'), deleteWorkspace)
 router.post('/:workspaceId/members', requireWorkspaceRole('admin'), addMember)
 router.delete('/:workspaceId/members/:userId', requireWorkspaceRole('admin'), removeMember)
+router.delete('/:workspaceId', authenticate, async (req, res) => {
+  await Workspace.findByIdAndDelete(req.params.workspaceId)
+  res.json({ success: true })
+})
+router.delete('/:workspaceId/projects/:projectId', authenticate, async (req, res) => {
+  await Project.findByIdAndDelete(req.params.projectId)
+  res.json({ success: true })
+})
 
 export default router
