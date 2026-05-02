@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { getWorkspacesApi, createWorkspaceApi } from '../api/workspace.js'
+import axios from 'axios'
 const useWorkspaceStore = create((set) => ({
   workspaces: [], currentWorkspace: null,
   deleteWorkspace: async (id) => {

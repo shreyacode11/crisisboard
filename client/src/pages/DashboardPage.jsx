@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, LogOut, LayoutGrid, Sparkles, Folder, Users, Clock, Zap, X } from 'lucide-react'
+import { Plus, LogOut, LayoutGrid, Sparkles, Folder, Users, Clock, Zap, X,Trash2 } from 'lucide-react'
 import useAuthStore from '../store/authStore.js'
 import useWorkspaceStore from '../store/workspaceStore.js'
-import { getProjectsApi, createProjectApi } from '../api/project.js'
+
 import { createBoardApi, getBoardsApi } from '../api/board.js'
+import { getProjectsApi, createProjectApi, deleteProjectApi } from '../api/project.js'
+
 
 const gradients = [
   'from-indigo-500 to-purple-500',
@@ -19,7 +21,7 @@ const gradients = [
 
 export default function DashboardPage() {
   const { user, logout } = useAuthStore()
-  const { workspaces, fetchWorkspaces, createWorkspace } = useWorkspaceStore()
+  const { workspaces, fetchWorkspaces, createWorkspace ,deleteWorkspace} = useWorkspaceStore()
   const [projects, setProjects] = useState([])
   const [selectedWs, setSelectedWs] = useState(null)
   const [showWsForm, setShowWsForm] = useState(false)
@@ -40,7 +42,17 @@ export default function DashboardPage() {
     catch { toast.error('Failed') }
   }
 
-  const handleCreateProj = async (e) => {
+  const deleteProjectFn = async (projectId) => {
+  try {
+    await deleteProjectApi(selectedWs._id, projectId)
+    setProjects(p => p.filter(proj => proj._id !== projectId))
+    toast.success('Project deleted')
+  } catch {
+    toast.error('Failed to delete project')
+  }
+}
+
+const handleCreateProj = async (e) => {    
     e.preventDefault(); if (!projName.trim()) return
     try {
       const res = await createProjectApi(selectedWs._id, { name: projName, description: projDesc })
@@ -98,6 +110,7 @@ export default function DashboardPage() {
               className='w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg glow-purple'>
               <Plus size={14} />
             </motion.button>
+            
           </div>
 
           <AnimatePresence>
@@ -119,6 +132,7 @@ export default function DashboardPage() {
 
           <div className='space-y-1'>
             {workspaces.map((ws, i) => (
+              
               <motion.button key={ws._id} initial={{opacity:0, x:-20}} animate={{opacity:1, x:0}} transition={{delay:i*0.05}}
                 onClick={() => setSelectedWs(ws)}
                 className={`w-full text-left px-3 py-2.5 rounded-xl text-sm transition-all flex items-center gap-3 group ${selectedWs?._id === ws._id
@@ -127,8 +141,22 @@ export default function DashboardPage() {
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${selectedWs?._id === ws._id ? 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white' : 'bg-white/5 text-zinc-400 group-hover:bg-white/10'}`}>
                   {ws.name[0]?.toUpperCase()}
                 </div>
-                <span className='font-medium truncate'>{ws.name}</span>
+                <span className='font-medium truncate flex-1'>{ws.name}</span>
+
+<button
+  onClick={e => {
+    e.stopPropagation()
+    if (confirm('Delete workspace?')) {
+      deleteWorkspace(ws._id)
+      if (selectedWs?._id === ws._id) setSelectedWs(null)
+    }
+  }}
+  className='opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-400 transition ml-1'
+>
+  <Trash2 size={12} />
+</button>
               </motion.button>
+              
             ))}
             {workspaces.length === 0 && !showWsForm && (
               <div className='text-center py-8'>
@@ -218,10 +246,7 @@ export default function DashboardPage() {
                       rows={2} placeholder='Description (optional)' />
                     <div className='flex gap-2'>
                       <button type='submit' className='bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-sm px-5 py-2.5 rounded-xl font-medium hover:opacity-90'>Create Project</button>
-                      <button onClick={e => { e.stopPropagation(); deleteWorkspace(ws._id); if(selectedWs?._id===ws._id) setSelectedWs(null) }}
-                       className='opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-400 ml-auto transition'>
-                      <Trash2 size={12} />
-                      </button><button type='button' onClick={() => setShowProjForm(false)} className='bg-white/5 hover:bg-white/10 text-zinc-300 text-sm px-5 py-2.5 rounded-xl'>Cancel</button>
+                      <button type='button' onClick={() => setShowProjForm(false)} className='bg-white/5 hover:bg-white/10 text-zinc-300 text-sm px-5 py-2.5 rounded-xl'>Cancel</button>
                     </div>
                   </motion.form>
                 )}
@@ -234,6 +259,15 @@ export default function DashboardPage() {
                     className='glass rounded-2xl p-5 cursor-pointer hover:border-indigo-500/40 transition-all group relative overflow-hidden'>
                     <div className={`absolute inset-0 bg-gradient-to-br ${gradients[i % gradients.length]} opacity-0 group-hover:opacity-5 transition-opacity`} />
                     <div className='relative'>
+                      <button
+  onClick={e => {
+    e.stopPropagation()
+    if (confirm('Delete project?')) deleteProjectFn(project._id)
+  }}
+  className='absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-400 transition'
+>
+  <Trash2 size={14} />
+</button>
                       <div className='flex items-center gap-3 mb-4'>
                         <div className={`w-10 h-10 bg-gradient-to-br ${gradients[i % gradients.length]} rounded-xl flex items-center justify-center text-xs font-bold text-white shadow-lg`}>
                           {project.identifier}

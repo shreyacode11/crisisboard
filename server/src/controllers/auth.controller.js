@@ -13,27 +13,16 @@ const cookieOptions = {
 
 export const register = async (req, res) => {
   try {
-    // Inside register(), after saving user:
-const token = crypto.randomBytes(32).toString('hex')
-user.verifyToken = token
-user.verifyTokenExpiry = Date.now() + 24 * 60 * 60 * 1000
-await user.save()
-await sendVerificationEmail(user.email, token)
-// Return message instead of JWT
-res.status(201).json({ success: true, message: 'Check your email to verify your account.' })
     const { name, email, password } = req.body
     const existingUser = await User.findOne({ email })
     if (existingUser) return errorResponse(res, 400, 'Email already registered')
     const user = await User.create({ name, email, password })
-    const accessToken = generateAccessToken(user._id)
-    const refreshToken = generateRefreshToken(user._id)
-    user.refreshToken = refreshToken
+    const token = crypto.randomBytes(32).toString('hex')
+    user.verifyToken = token
+    user.verifyTokenExpiry = Date.now() + 24 * 60 * 60 * 1000
     await user.save()
-    res.cookie('refreshToken', refreshToken, cookieOptions)
-    return successResponse(res, 201, 'Registration successful', {
-      accessToken,
-      user: { id: user._id, name: user.name, email: user.email },
-    })
+    await sendVerificationEmail(user.email, token)
+    return res.status(201).json({ success: true, message: 'Check your email to verify your account.' })
   } catch (error) {
     console.error('REGISTER ERROR:', error.message)
     return errorResponse(res, 500, error.message)
@@ -50,6 +39,7 @@ export const login = async (req, res) => {
     if (!user || !(await user.comparePassword(password))) {
       return errorResponse(res, 401, 'Invalid email or password')
     }
+    if (!user.isVerified) return errorResponse(res, 403, 'Please verify your email first.')
     const accessToken = generateAccessToken(user._id)
     const refreshToken = generateRefreshToken(user._id)
     user.refreshToken = refreshToken

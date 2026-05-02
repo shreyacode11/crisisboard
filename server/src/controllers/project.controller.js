@@ -7,6 +7,15 @@ export const createProject = async (req, res) => {
     return successResponse(res, 201, 'Project created', { project })
   } catch (error) { return errorResponse(res, 500, error.message) }
 }
+export const deleteProject = async (req, res) => {
+  try {
+    await Task.deleteMany({ project: req.params.projectId })
+    await Project.findByIdAndDelete(req.params.projectId)
+    return successResponse(res, 200, 'Project deleted')
+  } catch (err) {
+    return errorResponse(res, 500, err.message)
+  }
+}
 
 export const getProjects = async (req, res) => {
   try {

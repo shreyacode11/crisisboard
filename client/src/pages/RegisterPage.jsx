@@ -13,11 +13,21 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setLoading(true)
-    try { await register(form); toast.success('Welcome to CrisisBoard!'); navigate('/') }
-    catch (err) { toast.error(err.response?.data?.message || 'Registration failed') }
+    try {
+  await register(form)
+  toast.success('Verification email sent! Check your inbox.')
+  setMsg('We sent a verification link to ' + form.email)
+} catch (err) {
+  toast.error(err.response?.data?.message || 'Registration failed')
+}
     finally { setLoading(false) }
   }
-
+const [msg, setMsg] = useState('')
+{msg && (
+  <div className='mt-4 p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm text-center'>
+    {msg}
+  </div>
+)}
   return (
     <div className='min-h-screen relative overflow-hidden flex items-center justify-center p-4'>
       <div className='absolute inset-0 grid-bg opacity-40' />

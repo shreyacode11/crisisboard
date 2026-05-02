@@ -10,14 +10,18 @@ router.post('/logout', logout)
 router.post('/refresh', refreshAccessToken)
 router.get('/me', protect, getMe)
 router.get('/verify-email', async (req, res) => {
-  const { token } = req.query
-  const user = await User.findOne({ verifyToken: token, verifyTokenExpiry: { $gt: Date.now() } })
-  if (!user) return res.status(400).json({ success: false, message: 'Invalid or expired link' })
-  user.isVerified = true
-  user.verifyToken = undefined
-  user.verifyTokenExpiry = undefined
-  await user.save()
-  res.json({ success: true, message: 'Email verified! You can now log in.' })
+  try {
+    const { token } = req.query
+    const user = await User.findOne({ verifyToken: token, verifyTokenExpiry: { $gt: Date.now() } })
+    if (!user) return res.status(400).json({ success: false, message: 'Invalid or expired link' })
+    user.isVerified = true
+    user.verifyToken = undefined
+    user.verifyTokenExpiry = undefined
+    await user.save()
+    res.json({ success: true, message: 'Email verified! You can now log in.' })
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message })
+  }
 })
 
 export default router

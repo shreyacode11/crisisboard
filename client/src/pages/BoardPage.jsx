@@ -67,7 +67,7 @@ function Column({ column, tasks, onAddTask, onTaskClick, onDeleteTask }) {
         <motion.button whileHover={{scale:1.1, rotate:90}} onClick={() => setAdding(true)}
           className='w-6 h-6 rounded-md bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition'><Plus size={12} /></motion.button>
       </div>
-      <div className='overflow-y-auto scrollbar-thin flex-1 px-1'>
+      <div ref={setDropRef} className='overflow-y-auto scrollbar-thin flex-1 px-1 min-h-[80px]'>
         <SortableContext items={tasks.map(t => t._id)} strategy={verticalListSortingStrategy}>
           {tasks.map(task => <TaskCard key={task._id} task={task} onClick={onTaskClick} onDelete={onDeleteTask} />)}
         </SortableContext>
