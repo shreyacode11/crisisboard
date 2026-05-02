@@ -14,6 +14,6 @@ router.post('/', createProject)
 router.get('/', getProjects)
 router.get('/:projectId', getProject)
 router.put('/:projectId', updateProject)
-router.delete('/:projectId', deleteProject)
+
 
 export default router
