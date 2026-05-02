@@ -2,7 +2,6 @@ import express from 'express'
 import { createWorkspace, getMyWorkspaces, getWorkspace, updateWorkspace, deleteWorkspace, addMember, removeMember } from '../controllers/workspace.controller.js'
 import { protect } from '../middleware/auth.js'
 import { requireWorkspaceRole } from '../middleware/rbac.js'
-
 const router = express.Router()
 
 router.use(protect)
@@ -14,11 +13,11 @@ router.put('/:workspaceId', requireWorkspaceRole('admin'), updateWorkspace)
 router.delete('/:workspaceId', requireWorkspaceRole('admin'), deleteWorkspace)
 router.post('/:workspaceId/members', requireWorkspaceRole('admin'), addMember)
 router.delete('/:workspaceId/members/:userId', requireWorkspaceRole('admin'), removeMember)
-router.delete('/:workspaceId', authenticate, async (req, res) => {
+router.delete('/:workspaceId', protect, async (req, res) => {
   await Workspace.findByIdAndDelete(req.params.workspaceId)
   res.json({ success: true })
 })
-router.delete('/:workspaceId/projects/:projectId', authenticate, async (req, res) => {
+router.delete('/:workspaceId/projects/:projectId', protect, async (req, res) => {
   await Project.findByIdAndDelete(req.params.projectId)
   res.json({ success: true })
 })
