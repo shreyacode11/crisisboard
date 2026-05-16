@@ -2,6 +2,8 @@ import express from 'express'
 import { createWorkspace, getMyWorkspaces, getWorkspace, updateWorkspace, deleteWorkspace, addMember, removeMember } from '../controllers/workspace.controller.js'
 import { protect } from '../middleware/auth.js'
 import { requireWorkspaceRole } from '../middleware/rbac.js'
+import Workspace from '../models/Workspace.js'   // ← add this
+import Project from '../models/Project.js'
 const router = express.Router()
 
 router.use(protect)
