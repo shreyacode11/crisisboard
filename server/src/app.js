@@ -18,6 +18,7 @@ const allowedOrigins = [
   process.env.CLIENT_URL
 ].filter(Boolean)
 
+app.set('trust proxy', 1)  
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: 'Too many requests' })
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: 'Too many auth attempts' })
 

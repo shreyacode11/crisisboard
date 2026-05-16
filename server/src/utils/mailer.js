@@ -47,32 +47,20 @@
 //   })
 // }
 
-import nodemailer from 'nodemailer'
-import dns from 'dns'
+import { Resend } from 'resend'
 
-dns.setDefaultResultOrder('ipv4first')  // ← force IPv4
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',   // explicit host instead of service:'gmail'
-  port: 587,                // 587 instead of 465
-  secure: false,            // false for 587
-  requireTLS: true,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASS,
-  },
-})
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const sendVerificationEmail = async (email, token) => {
   const verifyUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${token}`
-  await transporter.sendMail({
-    from: `"CrisisBoard" <${process.env.GMAIL_USER}>`,
+  await resend.emails.send({
+    from: 'CrisisBoard <onboarding@resend.dev>',  // use this until you add a domain
     to: email,
     subject: 'Verify your CrisisBoard account',
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:auto">
         <h2>Welcome to CrisisBoard!</h2>
-        <p>Click the button below to verify your email:</p>
+        <p>Click below to verify your email:</p>
         <a href="${verifyUrl}" style="display:inline-block;padding:12px 24px;background:#6366f1;color:white;border-radius:8px;text-decoration:none;font-weight:600">
           Verify Email
         </a>
