@@ -42,7 +42,7 @@ export default function App() {
       
       <Route path='/login' element={<LoginPage />} />
       <Route path='/register' element={<RegisterPage />} />
-      <Route path='/verify-email' element={<VerifyEmailPage />} />
+      <Route path='/verify-email' element={<div>Verifying...</div>} />
       <Route path='/' element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path='/board/:workspaceId/:projectId/:boardId' element={<ProtectedRoute><BoardPage /></ProtectedRoute>} />
       <Route path='*' element={<Navigate to='/' />} />

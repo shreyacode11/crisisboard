@@ -11,6 +11,29 @@ const cookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 }
 
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query
+    if (!token) return errorResponse(res, 400, 'Token missing')
+
+    const user = await User.findOne({
+      verifyToken: token,
+      verifyTokenExpiry: { $gt: Date.now() },
+    }).select('+verifyToken +verifyTokenExpiry')
+
+    if (!user) return res.redirect(`${process.env.CLIENT_URL}/login?error=invalid-link`)
+
+    user.isVerified = true
+    user.verifyToken = undefined
+    user.verifyTokenExpiry = undefined
+    await user.save()
+
+    return res.redirect(`${process.env.CLIENT_URL}/login?verified=true`)  // ← redirect, not JSON
+  } catch (error) {
+    return errorResponse(res, 500, error.message)
+  }
+}
+
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body

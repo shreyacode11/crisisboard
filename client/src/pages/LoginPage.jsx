@@ -4,13 +4,25 @@ import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react'
 import useAuthStore from '../store/authStore.js'
+import { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const { login } = useAuthStore()
   const navigate = useNavigate()
+const [searchParams] = useSearchParams() 
 
+useEffect(() => {                                  // ← add this
+    if (searchParams.get('verified') === 'true') {
+      toast.success('Email verified! You can now sign in.')
+    }
+    if (searchParams.get('error') === 'invalid-link') {
+      toast.error('Verification link is invalid or expired.')
+    }
+  }, [])
+  
   const handleSubmit = async (e) => {
     e.preventDefault(); setLoading(true)
     try { await login(form); toast.success('Welcome back!'); navigate('/') }
