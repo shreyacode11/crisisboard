@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 export const sendVerificationEmail = async (email, token) => {
   const verifyUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${token}`
   await transporter.sendMail({
-    from: '"CrisisBoard" <noreply@crisisboardtest@gmail.com>',
+    from: '"CrisisBoard" <shreyabsaboji@gmail.com>',
     to: email,
     subject: 'Verify your CrisisBoard account',
     html: `
