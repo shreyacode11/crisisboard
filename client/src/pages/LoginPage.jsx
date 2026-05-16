@@ -51,7 +51,7 @@ useEffect(() => {                                  // ← add this
 
           <div className='text-center mb-8'>
             <h1 className='text-4xl font-bold mb-2'>
-              <span className='gradient-text'>CrisisBoard</span>
+              <span className='gradient-text'>Priorit</span>
             </h1>
             <p className='text-zinc-400 text-sm'>Welcome back. Sign in to continue.</p>
           </div>
