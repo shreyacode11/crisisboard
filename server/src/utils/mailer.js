@@ -1,24 +1,12 @@
-import nodemailer from 'nodemailer'  // ← this line is missing
+import { Resend } from 'resend'
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp-relay.brevo.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.BREVO_USER,
-    pass: process.env.BREVO_SMTP_KEY,
-  },
-})
-
-transporter.verify((error, success) => {
-  if (error) console.error('BREVO CONNECTION ERROR:', error)
-  else console.log('Brevo SMTP ready')
-})
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const sendVerificationEmail = async (email, token) => {
   const verifyUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${token}`
-  await transporter.sendMail({
-    from: '"CrisisBoard" <shreyabsaboji@gmail.com>',
+  
+  const { data, error } = await resend.emails.send({
+    from: 'CrisisBoard <onboarding@resend.dev>',
     to: email,
     subject: 'Verify your CrisisBoard account',
     html: `
@@ -32,4 +20,7 @@ export const sendVerificationEmail = async (email, token) => {
       </div>
     `,
   })
+
+  if (error) throw new Error(error.message)
+  console.log('Email sent:', data)
 }
