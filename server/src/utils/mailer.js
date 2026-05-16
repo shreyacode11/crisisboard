@@ -1,11 +1,18 @@
+import nodemailer from 'nodemailer'  // ← this line is missing
+
 const transporter = nodemailer.createTransport({
   host: 'smtp-relay.brevo.com',
   port: 587,
   secure: false,
   auth: {
-    user: process.env.BREVO_USER,   // ab86a2001@smtp-brevo.com
+    user: process.env.BREVO_USER,
     pass: process.env.BREVO_SMTP_KEY,
   },
+})
+
+transporter.verify((error, success) => {
+  if (error) console.error('BREVO CONNECTION ERROR:', error)
+  else console.log('Brevo SMTP ready')
 })
 
 export const sendVerificationEmail = async (email, token) => {
