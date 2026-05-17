@@ -6,6 +6,9 @@ const userSchema = new mongoose.Schema({
   isVerified: { type: Boolean, default: false },
 verifyToken: { type: String },
 verifyTokenExpiry: { type: Date },
+// models/User.js — add these fields
+isOnline: { type: Boolean, default: false },
+lastSeen: { type: Date, default: Date.now },
 
   name: {
     type: String,
@@ -34,6 +37,7 @@ verifyTokenExpiry: { type: Date },
     select: false,
   },
 }, { timestamps: true })
+
 
 
 // Hash password before saving
