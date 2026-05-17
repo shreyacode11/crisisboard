@@ -124,7 +124,7 @@ export default function BoardPage() {
   const loadTasks = async () => { try { const r = await getTasksApi(workspaceId, projectId, { boardId }); setTasks(r.data.data.tasks) } catch { toast.error('Failed to load tasks') } }
 
   const handleAddTask = async (title, status, priority) => {
-    try { const r = await createTaskApi(workspaceId, projectId, { title, status, boardId, priority, type: 'task' }); setTasks(p => [...p, r.data.data.task]); toast.success('Task created!') }
+    try { const r = await createTaskApi(workspaceId, projectId, { title, status, boardId, priority, type: 'task' });  toast.success('Task created!') }
     catch { toast.error('Failed') }
   }
   const handleDeleteTask = async (taskId) => {
