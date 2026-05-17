@@ -6,12 +6,12 @@ export const sendVerificationEmail = async (email, token) => {
   const verifyUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${token}`
   
   const { data, error } = await resend.emails.send({
-    from: 'CrisisBoard <onboarding@resend.dev>',
+    from: 'PRIORIT <onboarding@resend.dev>',
     to: email,
-    subject: 'Verify your CrisisBoard account',
+    subject: 'Verify your PRIORIT account',
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:auto">
-        <h2>Welcome to CrisisBoard!</h2>
+        <h2>Welcome to PRIORIT!</h2>
         <p>Click below to verify your email:</p>
         <a href="${verifyUrl}" style="display:inline-block;padding:12px 24px;background:#6366f1;color:white;border-radius:8px;text-decoration:none;font-weight:600">
           Verify Email
