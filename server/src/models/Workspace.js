@@ -10,6 +10,7 @@ const workspaceSchema = new mongoose.Schema({
   description: { type: String, default: '' },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   members: [memberSchema],
+  joinRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   slug: { type: String, unique: true, lowercase: true, trim: true }
 }, { timestamps: true })
 

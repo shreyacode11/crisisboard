@@ -1,8 +1,5 @@
-// 
-
-// utils/socket.js
 import { io } from 'socket.io-client'
-import useAuthStore from '../store/authStore.js'  // adjust path if needed
+import useAuthStore from '../store/authStore.js'
 
 const BASE = 'https://crisisboard-api.onrender.com'
 
@@ -10,10 +7,10 @@ let socket
 
 export const connectSocket = () => {
   if (!socket) {
-    const { user } = useAuthStore.getState()  
+    const { user } = useAuthStore.getState()
     socket = io(BASE, {
       withCredentials: true,
-      auth: { userId: user?._id }  
+      auth: { userId: user?._id }
     })
   }
   return socket

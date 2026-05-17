@@ -1,4 +1,5 @@
 import api from './axios.js'
+
 export const createTaskApi = (wId, pId, data) => api.post(`/workspaces/${wId}/projects/${pId}/tasks`, data)
 export const getTasksApi = (wId, pId, params) => api.get(`/workspaces/${wId}/projects/${pId}/tasks`, { params })
 export const getTaskApi = (wId, pId, tId) => api.get(`/workspaces/${wId}/projects/${pId}/tasks/${tId}`)
